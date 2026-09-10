@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Black Russia Laws</string>
+    <string name="start_overlay">Запустить оверлей</string>
+    <string name="stop_overlay">Остановить оверлей</string>
+    <string name="permission_needed">Нужно разрешение на отображение поверх других окон</string>
+    <string name="zakony">Законы</string>
+    <string name="pravila">Правила</string>
+    <string name="close">Закрыть</string>
+    <string name="edit_hint">Тексты можно редактировать в файлах:\n/Android/data/com.blackrussia.laws/files/zakony.txt\nи pravila.txt</string>
+</resources>
