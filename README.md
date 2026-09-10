@@ -1,2 +1,56 @@
-# BlackRussia-Laws-Overlay
-Android overlay app for Black Russia RP server laws and rules. Floating bubble to show scrollable laws/rules text. Texts editable via files.
+# Black Russia Laws Overlay
+
+Android приложение-оверлей для сервера **Black Russia** (RP).
+
+## Возможности
+
+- **Плавающий кружок** (bubble) поверх всех приложений (включая игру)
+- Нажатие на кружок → появляется меню с кнопками **«Законы»** и **«Правила»**
+- Выбор открывает **прокручиваемый текст** (можно листать вверх/вниз)
+- Кнопка **«НАЗАД»** возвращает в меню
+- Тексты **редактируются** в файлах на устройстве
+
+## Как пользоваться
+
+1. Установите APK
+2. Откройте приложение → нажмите **«Дать разрешение на оверлей»**
+3. Нажмите **«Запустить оверлей»**
+4. Появится оранжевый кружок с медведем — перетаскивайте его, нажимайте для меню
+
+## Редактирование текстов
+
+После первого запуска файлы копируются в:
+
+```
+/storage/emulated/0/Android/data/com.blackrussia.laws/files/zakony.txt
+/storage/emulated/0/Android/data/com.blackrussia.laws/files/pravila.txt
+```
+
+Или через файловый менеджер (нужен доступ к Android/data).  
+Измените файлы любым текстовым редактором — изменения применятся при следующем открытии панели (можно перезапустить оверлей).
+
+## Сборка
+
+Требования:
+- Android Studio Ladybug / Koala или новее
+- JDK 17
+- Android SDK 35
+
+```bash
+git clone https://github.com/kekih/BlackRussia-Laws-Overlay.git
+cd BlackRussia-Laws-Overlay
+# Откройте в Android Studio и нажмите Build → Build Bundle(s) / APK(s) → Build APK(s)
+# Или:
+./gradlew assembleDebug
+```
+
+APK будет в `app/build/outputs/apk/debug/app-debug.apk`
+
+## Разрешения
+
+- `SYSTEM_ALERT_WINDOW` — для оверлея
+- Foreground service — чтобы оверлей не убивался системой
+
+## Примечание
+
+Приложение создано как хелпер для игроков RP-сервера. Тексты взяты из публичных скринов правил сервера и могут быть изменены администрацией. Используйте на свой страх и риск.
