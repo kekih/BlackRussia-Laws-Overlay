@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/menu_bg"
+    android:padding="12dp"
+    android:elevation="10dp">
+
+    <Button
+        android:id="@+id/btnZakony"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:text="@string/zakony"
+        android:backgroundTint="#FF5722"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnPravila"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:text="@string/pravila"
+        android:backgroundTint="#FF9800"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnCloseMenu"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:text="@string/close"
+        android:backgroundTint="#424242"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>
