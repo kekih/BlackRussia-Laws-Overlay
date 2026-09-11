@@ -24,6 +24,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".EditorActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BlackRussiaLaws"
+            android:windowSoftInputMode="adjustResize" />
+
         <service
             android:name=".OverlayService"
             android:enabled="true"
