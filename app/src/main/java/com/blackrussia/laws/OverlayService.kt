@@ -1,19 +1,18 @@
 package com.blackrussia.laws
 
 import android.app.*
-import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.text.Html
 import android.view.*
 import android.widget.Button
-import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import java.io.File
-import java.io.FileOutputStream
 
 class OverlayService : Service() {
 
@@ -29,14 +28,16 @@ class OverlayService : Service() {
     private val CHANNEL_ID = "overlay_channel"
     private val NOTIFICATION_ID = 1001
 
+    private lateinit var repository: NotesRepository
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        repository = NotesRepository(this)
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, createNotification())
-        prepareTextFiles()
         showBubble()
     }
 
@@ -73,41 +74,6 @@ class OverlayService : Service() {
             .build()
     }
 
-    private fun prepareTextFiles() {
-        val filesDir = getExternalFilesDir(null) ?: filesDir
-        val zakonyFile = File(filesDir, "zakony.txt")
-        val pravilaFile = File(filesDir, "pravila.txt")
-
-        if (!zakonyFile.exists()) {
-            assets.open("zakony.txt").use { input ->
-                FileOutputStream(zakonyFile).use { output ->
-                    input.copyTo(output)
-                }
-            }
-        }
-        if (!pravilaFile.exists()) {
-            assets.open("pravila.txt").use { input ->
-                FileOutputStream(pravilaFile).use { output ->
-                    input.copyTo(output)
-                }
-            }
-        }
-    }
-
-    private fun loadText(fileName: String): String {
-        val filesDir = getExternalFilesDir(null) ?: filesDir
-        val file = File(filesDir, fileName)
-        return if (file.exists()) {
-            file.readText(Charsets.UTF_8)
-        } else {
-            try {
-                assets.open(fileName).bufferedReader().use { it.readText() }
-            } catch (e: Exception) {
-                "Файл не найден. Создайте $fileName в папке приложения."
-            }
-        }
-    }
-
     private fun showBubble() {
         if (bubbleView != null) return
 
@@ -134,7 +100,6 @@ class OverlayService : Service() {
             y = 300
         }
 
-        // Drag support
         bubbleView?.setOnTouchListener(object : View.OnTouchListener {
             private var initialX = 0
             private var initialY = 0
@@ -187,8 +152,81 @@ class OverlayService : Service() {
         hideText()
         if (menuView != null) return
 
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        menuView = inflater.inflate(R.layout.overlay_menu, null)
+        val notes = repository.loadNotes()
+        if (notes.isEmpty()) return
+
+        val density = resources.displayMetrics.density
+
+        val scroll = ScrollView(this).apply {
+            isVerticalScrollBarEnabled = true
+        }
+
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(
+                (12 * density).toInt(),
+                (12 * density).toInt(),
+                (12 * density).toInt(),
+                (12 * density).toInt()
+            )
+            setBackgroundResource(R.drawable.menu_bg)
+        }
+
+        notes.forEach { note ->
+            val btn = Button(this).apply {
+                text = note.title
+                setBackgroundColor(Color.parseColor("#FF5722"))
+                setTextColor(Color.WHITE)
+                textSize = 14f
+                isAllCaps = false
+                setPadding(
+                    (20 * density).toInt(),
+                    (12 * density).toInt(),
+                    (20 * density).toInt(),
+                    (12 * density).toInt()
+                )
+                layoutParams = LinearLayout.LayoutParams(
+                    (170 * density).toInt(),
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = (8 * density).toInt()
+                }
+                setOnClickListener {
+                    showTextPanel(note.title, note.content)
+                }
+            }
+            container.addView(btn)
+        }
+
+        val closeBtn = Button(this).apply {
+            text = "Закрыть"
+            setBackgroundColor(Color.parseColor("#424242"))
+            setTextColor(Color.WHITE)
+            textSize = 14f
+            isAllCaps = false
+            layoutParams = LinearLayout.LayoutParams(
+                (170 * density).toInt(),
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            setOnClickListener { hideMenu() }
+        }
+        container.addView(closeBtn)
+
+        scroll.addView(container)
+
+        val maxHeightPx = (if (notes.size > 3) 280 else 400) * density
+        val wrapper = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(
+                scroll,
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    maxHeightPx.toInt()
+                )
+            )
+        }
+
+        menuView = wrapper
 
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -209,16 +247,6 @@ class OverlayService : Service() {
             y = bubbleParams?.y ?: 300
         }
 
-        menuView?.findViewById<Button>(R.id.btnZakony)?.setOnClickListener {
-            showTextPanel("Законы", loadText("zakony.txt"))
-        }
-        menuView?.findViewById<Button>(R.id.btnPravila)?.setOnClickListener {
-            showTextPanel("Правила", loadText("pravila.txt"))
-        }
-        menuView?.findViewById<Button>(R.id.btnCloseMenu)?.setOnClickListener {
-            hideMenu()
-        }
-
         windowManager.addView(menuView, menuParams)
     }
 
@@ -231,7 +259,7 @@ class OverlayService : Service() {
         }
     }
 
-    private fun showTextPanel(title: String, content: String) {
+    private fun showTextPanel(title: String, contentHtml: String) {
         hideMenu()
         hideText()
 
@@ -239,7 +267,10 @@ class OverlayService : Service() {
         textView = inflater.inflate(R.layout.overlay_text, null)
 
         textView?.findViewById<TextView>(R.id.tvTitle)?.text = title
-        textView?.findViewById<TextView>(R.id.tvContent)?.text = content
+        val tvContent = textView?.findViewById<TextView>(R.id.tvContent)
+        tvContent?.text = Html.fromHtml(contentHtml, Html.FROM_HTML_MODE_COMPACT)
+        tvContent?.setLineSpacing(4f, 1.15f)
+
         textView?.findViewById<Button>(R.id.btnBack)?.setOnClickListener {
             hideText()
             showMenu()
@@ -256,15 +287,11 @@ class OverlayService : Service() {
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             type,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.CENTER
         }
-
-        // Flags for scrollable content
-        textParams!!.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 
         windowManager.addView(textView, textParams)
     }
