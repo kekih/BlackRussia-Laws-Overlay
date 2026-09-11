@@ -7,5 +7,4 @@
     <string name="zakony">Законы</string>
     <string name="pravila">Правила</string>
     <string name="close">Закрыть</string>
-    <string name="edit_hint">Тексты можно редактировать в файлах:\n/Android/data/com.blackrussia.laws/files/zakony.txt\nи pravila.txt</string>
 </resources>
