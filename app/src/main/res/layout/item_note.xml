@@ -4,17 +4,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
-    app:cardBackgroundColor="#1E1E1E"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="5dp"
+    app:cardBackgroundColor="#1A1A1A"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#2A2A2A">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="14dp"
+        android:paddingVertical="14dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
         android:gravity="center_vertical">
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="28dp"
+            android:background="#FF5722"
+            android:layout_marginEnd="14dp" />
 
         <TextView
             android:id="@+id/tvNoteTitle"
@@ -22,28 +33,30 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Законы"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:textColor="#F5F5F5"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end" />
 
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@android:drawable/ic_menu_edit"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Редактировать"
-            app:tint="#FF9800" />
+            app:tint="#FF9800"
+            android:padding="8dp" />
 
         <ImageButton
             android:id="@+id/btnDelete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@android:drawable/ic_menu_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Удалить"
-            app:tint="#EF5350" />
+            app:tint="#EF5350"
+            android:padding="8dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
