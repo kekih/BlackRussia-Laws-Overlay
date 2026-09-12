@@ -164,29 +164,32 @@ class OverlayService : Service() {
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(
-                (12 * density).toInt(),
-                (12 * density).toInt(),
-                (12 * density).toInt(),
-                (12 * density).toInt()
+                (14 * density).toInt(),
+                (14 * density).toInt(),
+                (14 * density).toInt(),
+                (14 * density).toInt()
             )
             setBackgroundResource(R.drawable.menu_bg)
+            elevation = 10f * density
         }
 
         notes.forEach { note ->
             val btn = Button(this).apply {
                 text = note.title
-                setBackgroundColor(Color.parseColor("#FF5722"))
+                setBackgroundResource(R.drawable.btn_menu_item)
                 setTextColor(Color.WHITE)
                 textSize = 14f
                 isAllCaps = false
+                typeface = android.graphics.Typeface.DEFAULT_BOLD
                 setPadding(
-                    (20 * density).toInt(),
-                    (12 * density).toInt(),
-                    (20 * density).toInt(),
-                    (12 * density).toInt()
+                    (18 * density).toInt(),
+                    (14 * density).toInt(),
+                    (18 * density).toInt(),
+                    (14 * density).toInt()
                 )
+                elevation = 2f * density
                 layoutParams = LinearLayout.LayoutParams(
-                    (170 * density).toInt(),
+                    (180 * density).toInt(),
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
                     bottomMargin = (8 * density).toInt()
@@ -200,12 +203,18 @@ class OverlayService : Service() {
 
         val closeBtn = Button(this).apply {
             text = "Закрыть"
-            setBackgroundColor(Color.parseColor("#424242"))
-            setTextColor(Color.WHITE)
-            textSize = 14f
+            setBackgroundResource(R.drawable.btn_menu_close)
+            setTextColor(Color.parseColor("#CCCCCC"))
+            textSize = 13f
             isAllCaps = false
+            setPadding(
+                (18 * density).toInt(),
+                (12 * density).toInt(),
+                (18 * density).toInt(),
+                (12 * density).toInt()
+            )
             layoutParams = LinearLayout.LayoutParams(
-                (170 * density).toInt(),
+                (180 * density).toInt(),
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
             setOnClickListener { hideMenu() }
@@ -214,7 +223,7 @@ class OverlayService : Service() {
 
         scroll.addView(container)
 
-        val maxHeightPx = (if (notes.size > 3) 280 else 400) * density
+        val maxHeightPx = (if (notes.size > 3) 300 else 420) * density
         val wrapper = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             addView(
